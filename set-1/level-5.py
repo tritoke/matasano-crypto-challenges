@@ -20,5 +20,6 @@ for i in arr:
     key_index %= len(key)
 
 out = [str(x) for x in out]
+
 print("".join(out) == answer)
 
