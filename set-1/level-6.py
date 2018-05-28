@@ -4,7 +4,7 @@ import itertools
 with open("the_file", "r") as the_file:
     b64data = the_file.read().replace("\n", "")
     data = base64.standard_b64decode(b64data)
-
+    print(data)
 
 
 def hamming_distance(x, y):
@@ -14,7 +14,7 @@ def hamming_distance(x, y):
     return sum([1 for i in "".join(list_diff) if int(i) == 1])
 
 L = []
-for KEYSIZE in range(2, 70):
+for KEYSIZE in range(2, 40):
     x = 1
     t=hamming_distance(data[:KEYSIZE], data[KEYSIZE:(x+1)*KEYSIZE])//KEYSIZE
     x+=1
@@ -48,7 +48,7 @@ for KEYSIZE in KEYSIZES:
         key += chr(max(answer)[1])
 
     # prints out all of the keys
-    # print(key)
+    print(key, KEYSIZE)
 
     key_index = 0
 
@@ -56,9 +56,9 @@ for KEYSIZE in KEYSIZES:
 
     decrypted_strings[KEYSIZE] = [chr(int(a) ^ ord(b)) for a, b in zip(data, itertools.cycle(key))]
 
-chars = string.ascii_letters + " "
+chars = string.ascii_letters
 answer = []
 for KEYSIZE in KEYSIZES:
     answer.append((sum([1 for x in decrypted_strings[KEYSIZE] if x in chars]), KEYSIZE))
-
+print(max(answer)[1])
 print("".join(decrypted_strings[max(answer)[1]]))
