@@ -1,7 +1,9 @@
 import base64
 import string
+import itertools
 with open("the_file", "r") as the_file:
-    data = base64.b64decode(the_file.read())
+    b64data = the_file.read().replace("\n", "")
+    data = base64.standard_b64decode(b64data)
 
 
 
@@ -17,29 +19,46 @@ for KEYSIZE in range(2, 70):
     t=hamming_distance(data[:KEYSIZE], data[KEYSIZE:(x+1)*KEYSIZE])//KEYSIZE
     x+=1
     t+=hamming_distance(data[x*KEYSIZE:(x+1)*KEYSIZE], data[(x+1)*KEYSIZE:(x+2)*KEYSIZE])//KEYSIZE
-    # x+=1
-    # t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
-    # x+=1
-    # t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
-    # x+=1
-    # t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
-    # t//=x
-    # print(KEYSIZE, t)
-    L.append((t, KEYSIZE))
+    x+=1
+    t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
+    x+=1
+    t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
+    x+=1
+    t+=hamming_distance(data[x * KEYSIZE:(x + 1) * KEYSIZE], data[(x + 1) * KEYSIZE:(x + 2) * KEYSIZE]) // KEYSIZE
+    t//=x
+    L.append((KEYSIZE, t))
 
-KEYSIZE = min(L)[1]
+KEYSIZES = [x[0] for x in L if x[1] <= 2]
+decrypted_strings = {}
+for KEYSIZE in KEYSIZES:
+    blocks = [data[i:i+KEYSIZE] for i in range(0, len(data), KEYSIZE)]
 
-blocks = [data[i:i+KEYSIZE] for i in range(0, len(data), KEYSIZE)]
+    key = ""
 
-for z in range(KEYSIZE):
-    answer = []
-    strings = {}
-    chars = string.ascii_letters + " "
-    for i in chars:
-        out_arr = []
-        for j in [x[z] for x in blocks]:
-            out_arr.append(ord(i) ^ j)
-        strings[i] = "".join([chr(x) for x in out_arr])
-        answer.append((sum([1 for x in out_arr if chr(x) in chars]), ord(i)))
-    print(max(answer)[1])
-    # print(strings[chr(max(answer)[1])])
+    for z in range(KEYSIZE):
+        answer = []
+        strings = {}
+        chars = string.ascii_letters + " "
+        for i in chars:
+            out_arr = []
+            for j in [x[z] for x in blocks if len(x) > z]:
+                out_arr.append(ord(i) ^ j)
+            strings[i] = "".join([chr(x) for x in out_arr])
+            answer.append((sum([1 for x in out_arr if chr(x) in chars]), ord(i)))
+        key += chr(max(answer)[1])
+
+    # prints out all of the keys
+    # print(key)
+
+    key_index = 0
+
+    out = []
+
+    decrypted_strings[KEYSIZE] = [chr(int(a) ^ ord(b)) for a, b in zip(data, itertools.cycle(key))]
+
+chars = string.ascii_letters + " "
+answer = []
+for KEYSIZE in KEYSIZES:
+    answer.append((sum([1 for x in decrypted_strings[KEYSIZE] if x in chars]), KEYSIZE))
+
+print("".join(decrypted_strings[max(answer)[1]]))
