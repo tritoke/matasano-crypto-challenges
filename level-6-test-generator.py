@@ -11,9 +11,11 @@ if len(sys.argv) != 3:
 
 try:
 	with open(sys.argv[1]) as file:
-		data = file.read().replace("\n", "")
+		data = "".join([i for i in file.read() if 0 < ord(i) < 256])
 except OSError as err:
 	print("error reading file: {0}".format(err))
+
+
 
 arr = [ord(i) for i in data]
 
