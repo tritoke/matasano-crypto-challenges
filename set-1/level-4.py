@@ -1,7 +1,7 @@
 import string
 most_common_letters = string.ascii_letters + " "
 best_guesses = []
-with open("60-char-strings.txt", "r") as file:
+with open("4.txt", "r") as file:
     for hex_string in file.read().split("\n"):
         arr = []
         for i in range(0, len(hex_string), 2):

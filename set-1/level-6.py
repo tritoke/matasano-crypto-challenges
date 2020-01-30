@@ -1,7 +1,7 @@
 import base64
 import string
 import itertools
-with open("the_file", "r") as the_file:
+with open("6.txt", "r") as the_file:
     b64data = the_file.read().replace("\n", "")
     data = base64.standard_b64decode(b64data)
     print(data)

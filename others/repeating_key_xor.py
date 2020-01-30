@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from base64 import standard_b64encode as b
 from itertools import *
 from string import *
@@ -10,11 +11,12 @@ except (OSError, IOError) as e:
     print("couldn't find file to open :/")
     exit(0)
 
-keyVal = "*" # could be any non alpha numeric character
+keyVal = "*"  # could be any non alpha numeric character
 alnum = digits + ascii_uppercase + ascii_lowercase
 isalnum = lambda x: True if sum([1 for i in x if i not in alnum]) == 0 else False
-while not isalnum(keyVal): keyVal = input("enter alphanumeric key with which to encrypt the file: ")
+while not isalnum(keyVal):
+    keyVal = input("enter alphanumeric key with which to encrypt the file: ")
 
 key = cycle(bytes(keyVal, "utf-8"))
 
-open("encrypted", "wb").write(b(bytes([i^next(key) for i in data])))
+open("encrypted", "wb").write(b(bytes([i ^ next(key) for i in data])))
